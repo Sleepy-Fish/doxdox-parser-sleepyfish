@@ -12,6 +12,12 @@
                 "var stage = new Facade(document.querySelector('canvas'));",
                 "var stage = new Facade('stage', 500, 300);"
             ],
+            "extends": [
+                {
+                    "class": "Object",
+                    "type": "extends"
+                }
+            ],
             "param": [
                 {
                     "name": "canvas",
@@ -99,6 +105,7 @@
                 "stage.addToStage(circle);",
                 "stage.addToStage(circle, { x: 100, y: 100 });"
             ],
+            "extends": [],
             "param": [
                 {
                     "name": "obj",
@@ -139,6 +146,7 @@
         "params": "[options]",
         "tags": {
             "example": [],
+            "extends": [],
             "param": [
                 {
                     "name": "options",
@@ -276,6 +284,7 @@
             "example": [
                 "console.log(Facade.Polygon.prototype._defaultOptions());"
             ],
+            "extends": [],
             "param": [
                 {
                     "name": "updated",
@@ -309,6 +318,7 @@
             "example": [
                 "polygon._draw(facade, options, metrics);"
             ],
+            "extends": [],
             "param": [
                 {
                     "name": "facade",

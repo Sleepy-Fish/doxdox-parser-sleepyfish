@@ -1,7 +1,7 @@
 {
-  "name": "doxdox-parser-dox",
-  "description": "Dox parser plugin for doxdox.",
-  "version": "2.0.0",
+  "name": "doxdox-parser-sleepyfish",
+  "description": "Sleepyfish parser plugin for doxdox.",
+  "version": "1.0.0",
   "main": "index.js",
   "engines": {
     "node": ">=8.0"
@@ -36,11 +36,16 @@
       "name": "Scott Doxey",
       "email": "hello@scottdoxey.com",
       "homepage": "http://scottdoxey.com/"
+    },
+    {
+      "name": "J Riley Harrington",
+      "email": "riley@sleepy.fish",
+      "homepage": "https://sleepy.fish"
     }
   ],
-  "homepage": "https://github.com/neogeek/doxdox-parser-dox",
+  "homepage": "https://github.com/Sleepy-Fish/doxdox-parser-sleepyfish",
   "repository": {
     "type": "git",
-    "url": "git://github.com/neogeek/doxdox-parser-dox.git"
+    "url": "git://github.com/Sleepy-Fish/doxdox-parser-sleepyfish.git"
   }
 }

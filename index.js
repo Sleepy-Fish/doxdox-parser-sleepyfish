@@ -99,8 +99,16 @@ const parser = (content, filename) =>
                         'types': tag.types,
                         'description': tag.description
                     })),
+                'extends': method.tags
+                    .filter(tag => tag.type === 'extends' ||
+                            tag.type === 'augments')
+                    .map(tag => ({
+                        'type': tag.type,
+                        'class': tag.otherClass
+                    })),
                 'return': method.tags
-                    .filter(tag => tag.type === 'return' || tag.type === 'returns')
+                    .filter(tag => tag.type === 'return' ||
+                        tag.type === 'returns')
                     .map(tag => ({
                         'types': tag.types,
                         'description': tag.description

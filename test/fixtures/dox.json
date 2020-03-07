@@ -11,6 +11,7 @@
             "example": [
                 "    utils.escape('<script></script>')\n    // => '&lt;script&gt;&lt;/script&gt;'"
             ],
+            "extends": [],
             "param": [
                 {
                     "name": "html",

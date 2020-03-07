@@ -11,6 +11,7 @@
  * @param {Object|String} [canvas] Reference to an HTML canvas element or a unique name.
  * @param {Integer} [width] Width of the canvas.
  * @param {Integer} [height] Height of the canvas.
+ * @extends Object
  * @return {Object} New Facade.js object.
  * @public
  */
