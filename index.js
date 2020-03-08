@@ -60,6 +60,8 @@ const parser = (content, filename) =>
         .map(method => ({
             'uid': formatStringForUID(`${filename}-${method.ctx.string}`),
             'isPrivate': method.isPrivate,
+            'isAbstract': Boolean(method.tags
+                .filter(tag => tag.type === 'abstract').length),
             'type': method.ctx.type,
             'name': formatStringForName(method.ctx.string),
             'description': method.description.full,

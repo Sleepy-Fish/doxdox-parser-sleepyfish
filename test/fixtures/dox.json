@@ -2,6 +2,7 @@
     {
         "uid": "dox.js-exports.escape",
         "isPrivate": false,
+        "isAbstract": false,
         "type": "method",
         "name": "exports.escape",
         "description": "Escape the given `html`.",
