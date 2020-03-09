@@ -1,18 +1,6 @@
 const dox = require('dox');
 
 /**
- * Format string as name.
- *
- * @example formatStringForName('module.exports.parser');
- * @param {String} contents String to format.
- * @return {String} Formatted string.
- * @private
- */
-
-const formatStringForName = content =>
-  content.toString().replace(/module\.exports\.|\.prototype|\(\)/gu, '');
-
-/**
  * Format string as param.
  *
  * @example formatStringForParam('[optional param]');
@@ -22,7 +10,7 @@ const formatStringForName = content =>
  */
 
 const formatStringForParam = content =>
-  content.toString().replace(/\[|\]/gu, '');
+  content.toString().replace(/\[|\]/gu, '').split('=')[0];
 
 /**
  * Format string as UID.
@@ -50,19 +38,86 @@ const formatStringForUID = content =>
  * @public
  */
 
-const parser = (content, filename) =>
-  dox
+const parser = (content, filename) => {
+  let output = dox
     .parseComments(content, {
       raw: true,
       skipSingleStar: true
     })
-    .filter(method => !method.ignore && method.ctx)
+    .filter(method => !method.ignore && method.ctx);
+
+  const cls = output.filter(method => method.isClass)[0];
+  const ctr = output.filter(method => method.isConstructor)[0];
+  if (!cls && ctr) throw new Error(`Cannot have constructor dox without class dox in ${filename}`);
+  let classMethod = null;
+  if (cls) {
+    classMethod = {
+      uid: formatStringForUID(`${filename}-${cls.ctx.name}`),
+      isAbstract: Boolean(cls.tags.filter(tag => tag.type === 'abstract').length),
+      type: 'class',
+      name: cls.ctx.name,
+      description: cls.description.full,
+      props: cls.tags
+        .filter(tag => tag.type === 'property')
+        .map(tag => ({
+          name: tag.name,
+          types: tag.types,
+          description: tag.description
+        }))
+    };
+    const ext = cls.tags.filter(tag => tag.type === 'extends')[0];
+    if (ext) classMethod.extends = ext.otherClass;
+    if (ctr) {
+      Object.assign(classMethod, {
+        display: `${cls.ctx.name}(${ctr.tags
+          .filter(tag => tag.type === 'param' && !tag.name.match(/\./u))
+          .map(tag => {
+            if (tag.optional) return `[${formatStringForParam(tag.name)}]`;
+            return formatStringForParam(tag.name);
+          })
+          .join(', ')
+          .replace(/\], \[/gu, ', ')
+          .replace(', [', '[, ')
+          })`,
+        params: ctr.tags
+          .filter(tag => tag.type === 'param' && !tag.name.match(/\./u))
+          .map(tag => {
+            const paramTag = {
+              name: formatStringForParam(tag.name),
+              isOptional: tag.optional,
+              types: tag.types,
+              description: tag.description
+            };
+            if (tag.optional) paramTag.default = tag.name.toString().replace(/\[|\]/gu, '').split('=')[1];
+            return paramTag;
+          })
+      });
+      for (const param of classMethod.params) {
+        if (param.types.filter(type => type.toLowerCase() === 'object').length) {
+          param.props = ctr.tags
+            .filter(tag => tag.type === 'param' && tag.name.match(new RegExp(`${param.name}\\.`, 'u')))
+            .map(tag => {
+              const paramTag = {
+                name: formatStringForParam(tag.name).split('.')[1],
+                isOptional: tag.optional,
+                types: tag.types,
+                description: tag.description
+              };
+              if (tag.optional) paramTag.default = tag.name.toString().replace(/\[|\]/gu, '').split('=')[1];
+              return paramTag;
+            });
+        }
+      }
+    }
+  }
+
+  output = output
+    .filter(method => !method.isClass || !method.isConstructor)
     .map(method => ({
-      uid: formatStringForUID(`${filename}-${method.ctx.string}`),
+      uid: formatStringForUID(`${filename}-${method.ctx.name}`),
       isPrivate: method.isPrivate,
-      isAbstract: Boolean(method.tags.filter(tag => tag.type === 'abstract').length),
       type: method.ctx.type,
-      name: formatStringForName(method.ctx.string),
+      name: method.ctx.name,
       description: method.description.full,
       empty: !method.description.full && !method.tags.length,
       params: method.tags
@@ -110,5 +165,8 @@ const parser = (content, filename) =>
       }
     }))
     .filter(method => !method.empty);
+  if (classMethod) output.unshift(classMethod);
+  return output;
+};
 
 module.exports = parser;
