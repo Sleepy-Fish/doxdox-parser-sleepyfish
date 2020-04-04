@@ -143,19 +143,6 @@ const parser = (content, filename) => {
             types: tag.types,
             description: tag.description
           })),
-        property: method.tags
-          .filter(tag => tag.type === 'property')
-          .map(tag => ({
-            name: tag.name,
-            types: tag.types,
-            description: tag.description
-          })),
-        extends: method.tags
-          .filter(tag => tag.type === 'extends' || tag.type === 'augments')
-          .map(tag => ({
-            type: tag.type,
-            class: tag.otherClass
-          })),
         return: method.tags
           .filter(tag => tag.type === 'return' || tag.type === 'returns')
           .map(tag => ({
@@ -165,7 +152,10 @@ const parser = (content, filename) => {
       }
     }))
     .filter(method => !method.empty);
-  if (classMethod) output.unshift(classMethod);
+  if (classMethod) {
+    classMethod.methods = output;
+    output = classMethod;
+  }
   return output;
 };
 
