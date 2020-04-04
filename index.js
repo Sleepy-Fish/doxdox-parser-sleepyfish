@@ -152,10 +152,7 @@ const parser = (content, filename) => {
       }
     }))
     .filter(method => !method.empty);
-  if (classMethod) {
-    classMethod.methods = output;
-    return [classMethod];
-  }
+  if (classMethod) output.unshift(classMethod);
   return output;
 };
 
