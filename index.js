@@ -112,7 +112,7 @@ const parser = (content, filename) => {
   }
 
   output = output
-    .filter(method => !method.isClass || !method.isConstructor)
+    .filter(method => !method.isClass && !method.isConstructor)
     .map(method => ({
       uid: formatStringForUID(`${filename}-${method.ctx.name}`),
       isPrivate: method.isPrivate,
