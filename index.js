@@ -154,7 +154,7 @@ const parser = (content, filename) => {
     .filter(method => !method.empty);
   if (classMethod) {
     classMethod.methods = output;
-    output = classMethod;
+    return [classMethod];
   }
   return output;
 };
